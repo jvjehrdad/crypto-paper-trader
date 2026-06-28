@@ -43,7 +43,7 @@ export const MarketList: React.FC<MarketListProps> = ({ onSelectCoin, selectedCo
     }
   };
   
-  usePolling(fetchCoins, 10000, !error);
+  usePolling(fetchCoins, 30000, !error);
   
   useEffect(() => {
     fetchCoins();
