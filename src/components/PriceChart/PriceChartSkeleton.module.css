@@ -6,17 +6,12 @@
   box-shadow: var(--shadow-lg);
 }
 
-.title {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--color-text);
-  margin: 0 0 1rem 0;
-  letter-spacing: -0.01em;
+.header {
+  margin-bottom: 1rem;
 }
 
-.chartContainer {
+.chart {
   height: 220px;
-  position: relative;
 }
 
 @media (min-width: 769px) {
@@ -24,12 +19,7 @@
     padding: 1.5rem;
   }
   
-  .title {
-    font-size: 1rem;
-    margin-bottom: 1.25rem;
-  }
-  
-  .chartContainer {
+  .chart {
     height: 300px;
   }
 }

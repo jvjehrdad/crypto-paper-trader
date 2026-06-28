@@ -3,7 +3,8 @@ import type { Coin } from '../../types';
 import { getCoinsMarkets } from '../../api/coingecko';
 import { usePolling } from '../../hooks/usePolling';
 import { formatCurrency, formatPercentage } from '../../utils/formatting';
-import { Loading, Error, Empty } from '../common';
+import { Error, Empty } from '../common';
+import { MarketListSkeleton } from './MarketListSkeleton';
 import styles from './MarketList.module.css';
 
 interface MarketListProps {
@@ -50,7 +51,7 @@ export const MarketList: React.FC<MarketListProps> = ({ onSelectCoin, selectedCo
   }, []);
   
   if (loading && coins.length === 0) {
-    return <Loading message="Loading market data..." />;
+    return <MarketListSkeleton />;
   }
   
   if (error) {

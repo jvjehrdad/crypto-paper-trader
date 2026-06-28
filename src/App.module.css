@@ -7,70 +7,71 @@
 
 .main {
   flex: 1;
-  padding: 2rem 0;
+  padding: 1.25rem 0;
 }
 
 .container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 1rem;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: 320px 1fr 320px;
-  gap: 1.5rem;
+  grid-template-columns: 1fr;
+  gap: 1rem;
   align-items: start;
 }
 
 .sidebar {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .content {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .chartSection {
-  min-height: 380px;
+  min-height: 280px;
 }
 
 .tradeSection {
-  min-height: 450px;
+  min-height: auto;
 }
 
-@media (max-width: 1200px) {
-  .grid {
-    grid-template-columns: 280px 1fr;
-  }
-  
-  .sidebar:last-child {
-    grid-column: span 2;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .sidebar:last-child {
-    grid-column: span 1;
-    grid-template-columns: 1fr;
-  }
-  
+@media (min-width: 769px) {
   .main {
-    padding: 1.25rem 0;
+    padding: 1.5rem 0;
   }
   
   .container {
-    padding: 0 1rem;
+    padding: 0 1.5rem;
+  }
+  
+  .grid {
+    grid-template-columns: 320px 1fr 320px;
+    gap: 1.5rem;
+  }
+  
+  .sidebar {
+    gap: 1.5rem;
+  }
+  
+  .content {
+    gap: 1.5rem;
+  }
+  
+  .chartSection {
+    min-height: 380px;
+  }
+}
+
+@media (min-width: 1201px) {
+  .grid {
+    grid-template-columns: 320px 1fr 320px;
   }
 }

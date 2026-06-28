@@ -14,7 +14,8 @@ import {
 } from 'chart.js';
 import type { CoinMarketChart } from '../../types';
 import { getMarketChart } from '../../api/coingecko';
-import { Loading, Error, Empty } from '../common';
+import { Error, Empty } from '../common';
+import { PriceChartSkeleton } from './PriceChartSkeleton';
 import { formatCurrency } from '../../utils/formatting';
 import styles from './PriceChart.module.css';
 
@@ -70,11 +71,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({ coinId }) => {
   }
   
   if (loading) {
-    return (
-      <div className={styles.container}>
-        <Loading message="Loading chart data..." />
-      </div>
-    );
+    return <PriceChartSkeleton />;
   }
   
   if (error) {
