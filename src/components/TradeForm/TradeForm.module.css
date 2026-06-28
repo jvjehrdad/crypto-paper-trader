@@ -151,6 +151,16 @@
   margin-top: 0.625rem;
 }
 
+.convertedValue {
+  padding: 0.875rem 1rem;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-primary);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
 .summary {
   background-color: var(--color-background);
   border-radius: var(--radius-xl);
