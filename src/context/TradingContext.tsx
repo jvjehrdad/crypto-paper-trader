@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { WalletState, Transaction, WalletAsset } from '../types';
+import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import type { ReactNode } from 'react';
+import type { WalletState, Transaction, WalletAsset } from '../types';
 import { Decimal } from '../utils/calculations';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 

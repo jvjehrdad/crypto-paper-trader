@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Coin } from '../../types';
+import type { Coin } from '../../types';
 import { getCoinsMarkets } from '../../api/coingecko';
 import { usePolling } from '../../hooks/usePolling';
 import { formatCurrency, formatPercentage } from '../../utils/formatting';
@@ -36,8 +36,8 @@ export const MarketList: React.FC<MarketListProps> = ({ onSelectCoin, selectedCo
       });
       
       setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch coins');
+    } catch {
+      setError('Failed to fetch coins');
     } finally {
       setLoading(false);
     }

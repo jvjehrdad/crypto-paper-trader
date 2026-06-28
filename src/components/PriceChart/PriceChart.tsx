@@ -10,8 +10,9 @@ import {
   Tooltip,
   Legend,
   Filler,
+  type TooltipItem,
 } from 'chart.js';
-import { CoinMarketChart } from '../../types';
+import type { CoinMarketChart } from '../../types';
 import { getMarketChart } from '../../api/coingecko';
 import { Loading, Error, Empty } from '../common';
 import { formatCurrency } from '../../utils/formatting';
@@ -49,8 +50,8 @@ export const PriceChart: React.FC<PriceChartProps> = ({ coinId }) => {
     try {
       const data = await getMarketChart(coinId, 7);
       setChartData(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch chart data');
+    } catch {
+      setError('Failed to fetch chart data');
     } finally {
       setLoading(false);
     }
@@ -132,8 +133,9 @@ export const PriceChart: React.FC<PriceChartProps> = ({ coinId }) => {
         padding: 12,
         displayColors: false,
         callbacks: {
-          label: (context: { parsed: { y: number } }) => {
-            return formatCurrency(context.parsed.y);
+          label: (context: TooltipItem<'line'>) => {
+            const value = context.parsed?.y;
+            return value !== null ? formatCurrency(value) : '';
           },
         },
       },

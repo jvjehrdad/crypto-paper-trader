@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTrading } from '../../context/TradingContext';
-import { Coin } from '../../types';
+import type { Coin } from '../../types';
 import { Decimal, calculateFee, calculateTotalWithFee } from '../../utils/calculations';
 import { formatCurrency } from '../../utils/formatting';
 import styles from './TradeForm.module.css';
@@ -35,18 +35,6 @@ export const TradeForm: React.FC<TradeFormProps> = ({ coin, onClose }) => {
     } else {
       const asset = state.assets.find(a => a.coinId === coin.id);
       return asset ? new Decimal(asset.amount) : new Decimal(0);
-    }
-  };
-  
-  const getCalculatedValue = () => {
-    const price = new Decimal(pricePerUnit || '0');
-    
-    if (inputMode === 'amount') {
-      const amountDecimal = new Decimal(amount || '0');
-      return amountDecimal.multiply(price);
-    } else {
-      const dollarsDecimal = new Decimal(amount || '0');
-      return dollarsDecimal.divide(price);
     }
   };
   

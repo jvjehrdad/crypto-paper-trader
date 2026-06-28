@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useTrading } from '../../context/TradingContext';
-import { Transaction } from '../../types';
+import type { Transaction } from '../../types';
 import { formatCurrency } from '../../utils/formatting';
 import { Empty } from '../common';
 import styles from './TransactionHistory.module.css';

@@ -5,7 +5,7 @@ import { PriceChart } from './components/PriceChart';
 import { TradeForm } from './components/TradeForm';
 import { Wallet } from './components/Wallet';
 import { TransactionHistory } from './components/TransactionHistory';
-import { Coin } from './types';
+import type { Coin } from './types';
 import { getCoinsMarkets } from './api/coingecko';
 import './styles/global.css';
 import styles from './App.module.css';

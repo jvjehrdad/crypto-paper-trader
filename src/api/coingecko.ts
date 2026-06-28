@@ -1,4 +1,4 @@
-import { Coin, CoinPrice, CoinMarketChart } from '../types';
+import type { Coin, CoinPrice, CoinMarketChart } from '../types';
 
 const BASE_URL = 'https://api.coingecko.com/api/v3';
 
