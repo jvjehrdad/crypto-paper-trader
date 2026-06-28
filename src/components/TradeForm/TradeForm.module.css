@@ -1,8 +1,9 @@
 .container {
   background-color: var(--color-surface);
-  border-radius: 12px;
+  border-radius: var(--radius-2xl);
   border: 1px solid var(--color-border);
-  padding: 1.25rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-lg);
 }
 
 .header {
@@ -17,20 +18,26 @@
   font-weight: 600;
   color: var(--color-text);
   margin: 0;
+  letter-spacing: -0.01em;
 }
 
 .closeButton {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  font-size: 1.25rem;
   color: var(--color-text-secondary);
   cursor: pointer;
-  padding: 0;
-  line-height: 1;
-  transition: color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .closeButton:hover {
+  background-color: var(--color-surface-hover);
   color: var(--color-text);
 }
 
@@ -44,28 +51,31 @@
 .tradeTypeButton {
   padding: 0.75rem;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background-color: transparent;
+  border-radius: var(--radius-full);
+  background-color: var(--color-background);
   color: var(--color-text-secondary);
   font-weight: 500;
+  font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 .tradeTypeButton:hover {
-  border-color: var(--color-text-secondary);
+  border-color: var(--color-text-muted);
 }
 
 .buyActive {
   background-color: var(--color-success);
   border-color: var(--color-success);
   color: white;
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
 }
 
 .sellActive {
   background-color: var(--color-danger);
   border-color: var(--color-danger);
   color: white;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
 }
 
 .inputModeSelector {
@@ -78,22 +88,24 @@
 .inputModeButton {
   padding: 0.5rem;
   border: 1px solid var(--color-border);
-  border-radius: 6px;
-  background-color: transparent;
+  border-radius: var(--radius-full);
+  background-color: var(--color-background);
   color: var(--color-text-secondary);
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 .inputModeButton:hover {
-  border-color: var(--color-text-secondary);
+  border-color: var(--color-text-muted);
 }
 
 .active {
   background-color: var(--color-primary-light);
   border-color: var(--color-primary);
   color: var(--color-primary);
+  box-shadow: 0 0 15px var(--color-primary-glow);
 }
 
 .formGroup {
@@ -102,51 +114,56 @@
 
 .label {
   display: block;
-  font-size: 0.875rem;
-  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
   margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .input {
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.875rem 1rem;
   background-color: var(--color-background);
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-full);
   color: var(--color-text);
   font-size: 1rem;
-  transition: border-color 0.2s;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 .input:focus {
   outline: none;
   border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
 }
 
 .input::placeholder {
-  color: var(--color-text-secondary);
-  opacity: 0.5;
+  color: var(--color-text-muted);
 }
 
 .balance {
   display: block;
   font-size: 0.75rem;
-  color: var(--color-text-secondary);
-  margin-top: 0.5rem;
+  color: var(--color-text-muted);
+  margin-top: 0.625rem;
 }
 
 .summary {
   background-color: var(--color-background);
-  border-radius: 8px;
-  padding: 1rem;
+  border-radius: var(--radius-xl);
+  padding: 1rem 1.25rem;
   margin-bottom: 1.5rem;
+  border: 1px solid var(--color-border);
 }
 
 .summaryRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 0;
+  padding: 0.625rem 0;
   font-size: 0.875rem;
   color: var(--color-text-secondary);
 }
@@ -159,15 +176,16 @@
   width: 100%;
   padding: 1rem;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-full);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+  letter-spacing: -0.01em;
 }
 
 .submitButton:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
@@ -178,6 +196,8 @@
 
 .buyButton:hover:not(:disabled) {
   background-color: var(--color-success-hover);
+  box-shadow: 0 0 25px rgba(34, 197, 94, 0.4);
+  transform: translateY(-1px);
 }
 
 .sellButton {
@@ -187,10 +207,13 @@
 
 .sellButton:hover:not(:disabled) {
   background-color: var(--color-danger-hover);
+  box-shadow: 0 0 25px rgba(239, 68, 68, 0.4);
+  transform: translateY(-1px);
 }
 
 @media (max-width: 768px) {
   .container {
-    padding: 1rem;
+    border-radius: var(--radius-xl);
+    padding: 1.25rem;
   }
 }

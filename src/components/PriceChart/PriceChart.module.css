@@ -1,15 +1,17 @@
 .container {
   background-color: var(--color-surface);
-  border-radius: 12px;
+  border-radius: var(--radius-2xl);
   border: 1px solid var(--color-border);
-  padding: 1.25rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-lg);
 }
 
 .title {
   font-size: 1rem;
   font-weight: 600;
   color: var(--color-text);
-  margin: 0 0 1rem 0;
+  margin: 0 0 1.25rem 0;
+  letter-spacing: -0.01em;
 }
 
 .chartContainer {
@@ -18,6 +20,11 @@
 }
 
 @media (max-width: 768px) {
+  .container {
+    border-radius: var(--radius-xl);
+    padding: 1.25rem;
+  }
+  
   .chartContainer {
     height: 200px;
   }

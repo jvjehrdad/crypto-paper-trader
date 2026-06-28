@@ -3,37 +3,41 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 3rem 2rem;
   text-align: center;
 }
 
 .icon {
-  font-size: 3rem;
+  font-size: 2.5rem;
   margin-bottom: 1rem;
+  opacity: 0.9;
 }
 
 .message {
   color: var(--color-danger);
-  font-size: 1rem;
+  font-size: 0.875rem;
   margin-bottom: 1.5rem;
+  font-weight: 500;
 }
 
 .retryButton {
   background-color: var(--color-primary);
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 500;
+  padding: 0.75rem 1.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8125rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.1s;
+  transition: all 0.2s ease;
 }
 
 .retryButton:hover {
   background-color: var(--color-primary-hover);
+  box-shadow: 0 0 20px var(--color-primary-glow);
+  transform: translateY(-1px);
 }
 
 .retryButton:active {
-  transform: scale(0.98);
+  transform: translateY(0);
 }
