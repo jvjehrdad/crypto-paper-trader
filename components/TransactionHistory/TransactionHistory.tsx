@@ -127,70 +127,58 @@ export const TransactionHistory: React.FC = () => {
         </div>
       </div>
       
-      <div className={styles.tableContainer}>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th 
-                className={`${styles.th} ${sortField === 'timestamp' ? styles.sorted : ''}`}
-                onClick={() => handleSort('timestamp')}
-              >
-                Date {sortField === 'timestamp' && (sortDirection === 'asc' ? '↑' : '↓')}
-              </th>
-              <th 
-                className={`${styles.th} ${sortField === 'type' ? styles.sorted : ''}`}
-                onClick={() => handleSort('type')}
-              >
-                Type {sortField === 'type' && (sortDirection === 'asc' ? '↑' : '↓')}
-              </th>
-              <th 
-                className={`${styles.th} ${sortField === 'coinName' ? styles.sorted : ''}`}
-                onClick={() => handleSort('coinName')}
-              >
-                Coin {sortField === 'coinName' && (sortDirection === 'asc' ? '↑' : '↓')}
-              </th>
-              <th 
-                className={`${styles.th} ${sortField === 'amount' ? styles.sorted : ''}`}
-                onClick={() => handleSort('amount')}
-              >
-                Amount {sortField === 'amount' && (sortDirection === 'asc' ? '↑' : '↓')}
-              </th>
-              <th 
-                className={`${styles.th} ${sortField === 'pricePerUnit' ? styles.sorted : ''}`}
-                onClick={() => handleSort('pricePerUnit')}
-              >
-                Price {sortField === 'pricePerUnit' && (sortDirection === 'asc' ? '↑' : '↓')}
-              </th>
-              <th 
-                className={`${styles.th} ${sortField === 'totalAmount' ? styles.sorted : ''}`}
-                onClick={() => handleSort('totalAmount')}
-              >
-                Total {sortField === 'totalAmount' && (sortDirection === 'asc' ? '↑' : '↓')}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredTransactions.map(tx => (
-              <tr key={tx.id} className={styles.row}>
-                <td className={styles.td}>{formatDate(tx.timestamp)}</td>
-                <td className={styles.td}>
-                  <span className={`${styles.typeBadge} ${tx.type === 'buy' ? styles.buy : styles.sell}`}>
-                    {tx.type.toUpperCase()}
-                  </span>
-                </td>
-                <td className={styles.td}>
-                  <div className={styles.coinCell}>
-                    <span className={styles.coinName}>{tx.coinName}</span>
-                    <span className={styles.coinSymbol}>{tx.coinSymbol.toUpperCase()}</span>
-                  </div>
-                </td>
-                <td className={styles.td}>{parseFloat(tx.amount).toFixed(8)}</td>
-                <td className={styles.td}>{formatCurrency(parseFloat(tx.pricePerUnit))}</td>
-                <td className={styles.td}>{formatCurrency(parseFloat(tx.totalAmount))}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className={styles.sortBar}>
+        {([
+          ['timestamp', 'Date'],
+          ['type', 'Type'],
+          ['coinName', 'Coin'],
+          ['amount', 'Amount'],
+          ['pricePerUnit', 'Price'],
+          ['totalAmount', 'Total'],
+        ] as const).map(([field, label]) => (
+          <button
+            key={field}
+            className={`${styles.sortChip} ${sortField === field ? styles.sortedChip : ''}`}
+            onClick={() => handleSort(field)}
+          >
+            {label}
+            {sortField === field && (sortDirection === 'asc' ? ' ↑' : ' ↓')}
+          </button>
+        ))}
+      </div>
+
+      <div className={styles.cardList}>
+        {filteredTransactions.map(tx => (
+          <div key={tx.id} className={styles.card}>
+            <div className={styles.cardHeader}>
+              <div className={styles.coinCell}>
+                <span className={styles.coinName}>{tx.coinName}</span>
+                <span className={styles.coinSymbol}>{tx.coinSymbol.toUpperCase()}</span>
+              </div>
+              <span className={`${styles.typeBadge} ${tx.type === 'buy' ? styles.buy : styles.sell}`}>
+                {tx.type.toUpperCase()}
+              </span>
+            </div>
+            <div className={styles.cardBody}>
+              <div className={styles.cardField}>
+                <span className={styles.cardLabel}>Date</span>
+                <span className={styles.cardValue}>{formatDate(tx.timestamp)}</span>
+              </div>
+              <div className={styles.cardField}>
+                <span className={styles.cardLabel}>Amount</span>
+                <span className={styles.cardValue}>{parseFloat(tx.amount).toFixed(8)}</span>
+              </div>
+              <div className={styles.cardField}>
+                <span className={styles.cardLabel}>Price</span>
+                <span className={styles.cardValue}>{formatCurrency(parseFloat(tx.pricePerUnit))}</span>
+              </div>
+              <div className={styles.cardField}>
+                <span className={styles.cardLabel}>Total</span>
+                <span className={styles.cardValue}>{formatCurrency(parseFloat(tx.totalAmount))}</span>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
