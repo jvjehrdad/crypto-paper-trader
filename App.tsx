@@ -5,9 +5,9 @@ import { PriceChart } from './components/PriceChart';
 import { TradeForm } from './components/TradeForm';
 import { Wallet } from './components/Wallet';
 import { TransactionHistory } from './components/TransactionHistory';
-import type { Coin } from './types';
-import { getCoinsMarkets } from './api/coingecko';
-import './styles/global.css';
+import type { Coin } from './core/interfaces';
+import { getCoinsMarkets } from './core/api/coingecko';
+import './core/styles/global.css';
 import styles from './App.module.css';
 
 const App: React.FC = () => {

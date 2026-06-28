@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useTrading } from '../../context/TradingContext';
-import type { Coin } from '../../types';
-import { Decimal, calculateFee, calculateTotalWithFee } from '../../utils/calculations';
-import { formatCurrency } from '../../utils/formatting';
+import { useTrading } from '../../core/contexts/TradingContext';
+import type { Coin } from '../../core/interfaces';
+import { dMultiply, dDivide, dLte, dGt, calculateFee, calculateTotalWithFee, toStr, toFixed } from '../../core/utils/calculations';
+import { formatCurrency } from '../../core/utils/formatting';
 import styles from './TradeForm.module.css';
 
 interface TradeFormProps {
@@ -33,27 +33,27 @@ export const TradeForm: React.FC<TradeFormProps> = ({ coin, onClose }) => {
 
   const getAvailableBalance = () => {
     if (tradeType === 'buy') {
-      return new Decimal(state.cashBalance);
+      return parseFloat(state.cashBalance);
     } else {
       const asset = state.assets.find(a => a.coinId === coin.id);
-      return asset ? new Decimal(asset.amount) : new Decimal(0);
+      return asset ? parseFloat(asset.amount) : 0;
     }
   };
 
-  const getCurrentCryptoAmount = (): Decimal => {
-    const price = new Decimal(pricePerUnit || '0');
+  const getCurrentCryptoAmount = (): number => {
     if (inputMode === 'amount') {
-      return new Decimal(cryptoAmount || '0');
+      return parseFloat(cryptoAmount || '0');
     } else {
-      const dollars = new Decimal(dollarAmount || '0');
-      return price.isZero() ? new Decimal(0) : dollars.divide(price);
+      const dollars = parseFloat(dollarAmount || '0');
+      const price = parseFloat(pricePerUnit || '0');
+      return price === 0 ? 0 : dDivide(dollars, price);
     }
   };
 
-  const getCurrentDollarTotal = (): Decimal => {
-    const price = new Decimal(pricePerUnit || '0');
+  const getCurrentDollarTotal = (): number => {
     const cryptoAmt = getCurrentCryptoAmount();
-    return cryptoAmt.multiply(price);
+    const price = parseFloat(pricePerUnit || '0');
+    return dMultiply(cryptoAmt, price);
   };
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,19 +89,19 @@ export const TradeForm: React.FC<TradeFormProps> = ({ coin, onClose }) => {
 
   const handleTrade = () => {
     const cryptoAmt = getCurrentCryptoAmount();
-    const priceDecimal = new Decimal(pricePerUnit || '0');
-    const subtotal = cryptoAmt.multiply(priceDecimal);
-    const feeDecimal = calculateFee(subtotal, new Decimal(feePercentage));
+    const priceVal = parseFloat(pricePerUnit || '0');
+    const subtotal = dMultiply(cryptoAmt, priceVal);
+    const feeDecimal = calculateFee(subtotal, feePercentage);
     const totalWithFee = calculateTotalWithFee(subtotal, feeDecimal);
 
     const availableBalance = getAvailableBalance();
 
-    if (tradeType === 'buy' && totalWithFee.isGreaterThan(availableBalance)) {
+    if (tradeType === 'buy' && dGt(totalWithFee, availableBalance)) {
       alert('Insufficient balance');
       return;
     }
 
-    if (tradeType === 'sell' && cryptoAmt.isGreaterThan(availableBalance)) {
+    if (tradeType === 'sell' && dGt(cryptoAmt, availableBalance)) {
       alert('Insufficient holdings');
       return;
     }
@@ -112,9 +112,9 @@ export const TradeForm: React.FC<TradeFormProps> = ({ coin, onClose }) => {
         coinId: coin.id,
         coinName: coin.name,
         coinSymbol: coin.symbol,
-        amount: cryptoAmt.toString(),
-        pricePerUnit: priceDecimal.toString(),
-        fee: feeDecimal.toString(),
+        amount: toStr(cryptoAmt),
+        pricePerUnit: toStr(priceVal),
+        fee: toStr(feeDecimal),
       },
     });
 
@@ -123,24 +123,24 @@ export const TradeForm: React.FC<TradeFormProps> = ({ coin, onClose }) => {
 
   const isValid = () => {
     const cryptoAmt = getCurrentCryptoAmount();
-    const priceDecimal = new Decimal(pricePerUnit || '0');
+    const priceVal = parseFloat(pricePerUnit || '0');
 
-    if (cryptoAmt.isLessThanOrEqualTo(0) || priceDecimal.isLessThanOrEqualTo(0)) {
+    if (dLte(cryptoAmt, 0) || dLte(priceVal, 0)) {
       return false;
     }
 
     const availableBalance = getAvailableBalance();
-    const subtotal = cryptoAmt.multiply(priceDecimal);
+    const subtotal = dMultiply(cryptoAmt, priceVal);
     const totalWithFee = calculateTotalWithFee(
       subtotal,
-      calculateFee(subtotal, new Decimal(feePercentage))
+      calculateFee(subtotal, feePercentage)
     );
 
-    if (tradeType === 'buy' && totalWithFee.isGreaterThan(availableBalance)) {
+    if (tradeType === 'buy' && dGt(totalWithFee, availableBalance)) {
       return false;
     }
 
-    if (tradeType === 'sell' && cryptoAmt.isGreaterThan(availableBalance)) {
+    if (tradeType === 'sell' && dGt(cryptoAmt, availableBalance)) {
       return false;
     }
 
@@ -149,7 +149,7 @@ export const TradeForm: React.FC<TradeFormProps> = ({ coin, onClose }) => {
 
   const cryptoAmt = getCurrentCryptoAmount();
   const totalValue = getCurrentDollarTotal();
-  const fee = calculateFee(totalValue, new Decimal(feePercentage));
+  const fee = calculateFee(totalValue, feePercentage);
   const totalWithFee = calculateTotalWithFee(totalValue, fee);
 
   const inputValue = inputMode === 'amount' ? cryptoAmount : dollarAmount;
@@ -209,7 +209,7 @@ export const TradeForm: React.FC<TradeFormProps> = ({ coin, onClose }) => {
         <span className={styles.balance}>
           Available: {tradeType === 'buy'
             ? formatCurrency(parseFloat(state.cashBalance))
-            : `${getAvailableBalance().toString()} ${coin.symbol.toUpperCase()}`
+            : `${getAvailableBalance()} ${coin.symbol.toUpperCase()}`
           }
         </span>
       </div>
@@ -218,7 +218,7 @@ export const TradeForm: React.FC<TradeFormProps> = ({ coin, onClose }) => {
         <div className={styles.formGroup}>
           <label className={styles.label}>You Will Receive</label>
           <div className={styles.convertedValue}>
-            {cryptoAmt.round(8).toString()} {coin.symbol.toUpperCase()}
+            {toFixed(cryptoAmt, 8)} {coin.symbol.toUpperCase()}
           </div>
         </div>
       )}
@@ -248,15 +248,15 @@ export const TradeForm: React.FC<TradeFormProps> = ({ coin, onClose }) => {
       <div className={styles.summary}>
         <div className={styles.summaryRow}>
           <span>Subtotal</span>
-          <span>{formatCurrency(totalValue.toNumber())}</span>
+          <span>{formatCurrency(totalValue)}</span>
         </div>
         <div className={styles.summaryRow}>
           <span>Fee ({feePercentage}%)</span>
-          <span>{formatCurrency(fee.toNumber())}</span>
+          <span>{formatCurrency(fee)}</span>
         </div>
         <div className={styles.summaryRow}>
           <span>Total</span>
-          <span>{formatCurrency(totalWithFee.toNumber())}</span>
+          <span>{formatCurrency(totalWithFee)}</span>
         </div>
       </div>
 

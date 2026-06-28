@@ -1,6 +1,6 @@
 import React from 'react';
-import { useTrading } from '../../context/TradingContext';
-import { formatCurrency, formatPercentage } from '../../utils/formatting';
+import { useTrading } from '../../core/contexts/TradingContext';
+import { formatCurrency, formatPercentage } from '../../core/utils/formatting';
 import { Empty } from '../common';
 import styles from './Wallet.module.css';
 

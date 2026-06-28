@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { useTrading } from '../../context/TradingContext';
-import type { Transaction } from '../../types';
-import { formatCurrency } from '../../utils/formatting';
+import { useTrading } from '../../core/contexts/TradingContext';
+import type { Transaction } from '../../core/interfaces';
+import { formatCurrency } from '../../core/utils/formatting';
 import { Empty, CustomSelect } from '../common';
 import styles from './TransactionHistory.module.css';
 
@@ -179,8 +179,10 @@ export const TransactionHistory: React.FC = () => {
                   </span>
                 </td>
                 <td className={styles.td}>
-                  <span className={styles.coinName}>{tx.coinName}</span>
-                  <span className={styles.coinSymbol}>{tx.coinSymbol.toUpperCase()}</span>
+                  <div className={styles.coinCell}>
+                    <span className={styles.coinName}>{tx.coinName}</span>
+                    <span className={styles.coinSymbol}>{tx.coinSymbol.toUpperCase()}</span>
+                  </div>
                 </td>
                 <td className={styles.td}>{parseFloat(tx.amount).toFixed(8)}</td>
                 <td className={styles.td}>{formatCurrency(parseFloat(tx.pricePerUnit))}</td>

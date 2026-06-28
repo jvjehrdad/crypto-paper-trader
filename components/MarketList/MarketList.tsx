@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import type { Coin } from '../../types';
-import { getCoinsMarkets } from '../../api/coingecko';
-import { usePolling } from '../../hooks/usePolling';
-import { formatCurrency, formatPercentage } from '../../utils/formatting';
+import type { Coin } from '../../core/interfaces';
+import { getCoinsMarkets } from '../../core/api/coingecko';
+import { usePolling } from '../../core/hooks/usePolling';
+import { formatCurrency, formatPercentage } from '../../core/utils/formatting';
 import { Error, Empty } from '../common';
 import { MarketListSkeleton } from './MarketListSkeleton';
 import styles from './MarketList.module.css';

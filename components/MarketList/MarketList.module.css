@@ -130,7 +130,8 @@
   }
   
   .list {
-    max-height: 280px;
+    max-height: 50vh;
+    min-height: 200px;
     padding: 0.25rem;
   }
   

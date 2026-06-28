@@ -1,8 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import type { ReactNode } from 'react';
-import type { WalletState, Transaction, WalletAsset } from '../types';
-import { Decimal } from '../utils/calculations';
-import { useLocalStorage } from '../hooks/useLocalStorage';
+import type { WalletState, Transaction, WalletAsset } from '../interfaces';
+import { dAdd, dMultiply, dSubtract, dDivide, dGt, dLte, toStr } from '../utils/calculations';
 
 interface TradingContextType {
   state: WalletState;
@@ -30,37 +29,37 @@ const calculateNewAsset = (
   transactionType: 'buy' | 'sell'
 ): WalletAsset | undefined => {
   if (transactionType === 'buy') {
-    const existingAmount = new Decimal(existingAsset?.amount || '0');
-    const existingAveragePrice = new Decimal(existingAsset?.averageBuyPrice || '0');
-    const newAmount = new Decimal(amount);
-    const newPrice = new Decimal(pricePerUnit);
-    
-    const totalAmount = existingAmount.add(newAmount);
-    const totalCost = existingAmount.multiply(existingAveragePrice).add(newAmount.multiply(newPrice));
-    const newAveragePrice = totalCost.divide(totalAmount);
-    
+    const existingAmount = parseFloat(existingAsset?.amount || '0');
+    const existingAveragePrice = parseFloat(existingAsset?.averageBuyPrice || '0');
+    const newAmount = parseFloat(amount);
+    const newPrice = parseFloat(pricePerUnit);
+
+    const totalAmount = dAdd(existingAmount, newAmount);
+    const totalCost = dAdd(dMultiply(existingAmount, existingAveragePrice), dMultiply(newAmount, newPrice));
+    const newAveragePrice = dDivide(totalCost, totalAmount);
+
     return {
       coinId: existingAsset?.coinId || '',
       symbol: existingAsset?.symbol || '',
       name: existingAsset?.name || '',
-      amount: totalAmount.toString(),
-      averageBuyPrice: newAveragePrice.toString(),
+      amount: toStr(totalAmount),
+      averageBuyPrice: toStr(newAveragePrice),
       currentPrice: existingAsset?.currentPrice || pricePerUnit,
       profitLoss: '0',
       profitLossPercentage: '0',
     };
   } else {
-    const existingAmount = new Decimal(existingAsset?.amount || '0');
-    const newAmount = new Decimal(amount);
-    const remainingAmount = existingAmount.subtract(newAmount);
-    
-    if (remainingAmount.isLessThanOrEqualTo(0)) {
+    const existingAmount = parseFloat(existingAsset?.amount || '0');
+    const newAmount = parseFloat(amount);
+    const remainingAmount = dSubtract(existingAmount, newAmount);
+
+    if (dLte(remainingAmount, 0)) {
       return undefined;
     }
-    
+
     return {
       ...existingAsset!,
-      amount: remainingAmount.toString(),
+      amount: toStr(remainingAmount),
     };
   }
 };
@@ -69,18 +68,18 @@ const tradingReducer = (state: WalletState, action: TradingAction): WalletState 
   switch (action.type) {
     case 'BUY': {
       const { coinId, coinName, coinSymbol, amount, pricePerUnit, fee } = action.payload;
-      const totalCost = new Decimal(amount).multiply(new Decimal(pricePerUnit));
-      const feeDecimal = new Decimal(fee);
-      const totalWithFee = totalCost.add(feeDecimal);
-      
-      const cashBalance = new Decimal(state.cashBalance);
-      if (totalWithFee.isGreaterThan(cashBalance)) {
+      const totalCost = dMultiply(amount, pricePerUnit);
+      const feeDecimal = parseFloat(fee);
+      const totalWithFee = dAdd(totalCost, feeDecimal);
+
+      const cashBalance = parseFloat(state.cashBalance);
+      if (dGt(totalWithFee, cashBalance)) {
         return state;
       }
-      
+
       const existingAsset = state.assets.find(asset => asset.coinId === coinId);
       const newAsset = calculateNewAsset(existingAsset, amount, pricePerUnit, 'buy');
-      
+
       let newAssets: WalletAsset[];
       if (newAsset) {
         if (existingAsset) {
@@ -93,7 +92,7 @@ const tradingReducer = (state: WalletState, action: TradingAction): WalletState 
       } else {
         newAssets = state.assets;
       }
-      
+
       const transaction: Transaction = {
         id: Date.now().toString(),
         coinId,
@@ -102,38 +101,38 @@ const tradingReducer = (state: WalletState, action: TradingAction): WalletState 
         type: 'buy',
         amount,
         pricePerUnit,
-        totalAmount: totalCost.toString(),
+        totalAmount: toStr(totalCost),
         fee,
         timestamp: Date.now(),
       };
-      
+
       return {
-        cashBalance: cashBalance.subtract(totalWithFee).toString(),
+        cashBalance: toStr(dSubtract(cashBalance, totalWithFee)),
         assets: newAssets,
         transactions: [...state.transactions, transaction],
       };
     }
-    
+
     case 'SELL': {
       const { coinId, coinName, coinSymbol, amount, pricePerUnit, fee } = action.payload;
-      const totalRevenue = new Decimal(amount).multiply(new Decimal(pricePerUnit));
-      const feeDecimal = new Decimal(fee);
-      const totalAfterFee = totalRevenue.subtract(feeDecimal);
-      
+      const totalRevenue = dMultiply(amount, pricePerUnit);
+      const feeDecimal = parseFloat(fee);
+      const totalAfterFee = dSubtract(totalRevenue, feeDecimal);
+
       const existingAsset = state.assets.find(asset => asset.coinId === coinId);
       if (!existingAsset) {
         return state;
       }
-      
-      const existingAmount = new Decimal(existingAsset.amount);
-      const sellAmount = new Decimal(amount);
-      
-      if (sellAmount.isGreaterThan(existingAmount)) {
+
+      const existingAmount = parseFloat(existingAsset.amount);
+      const sellAmount = parseFloat(amount);
+
+      if (dGt(sellAmount, existingAmount)) {
         return state;
       }
-      
+
       const newAsset = calculateNewAsset(existingAsset, amount, pricePerUnit, 'sell');
-      
+
       let newAssets: WalletAsset[];
       if (newAsset) {
         newAssets = state.assets.map(asset =>
@@ -142,7 +141,7 @@ const tradingReducer = (state: WalletState, action: TradingAction): WalletState 
       } else {
         newAssets = state.assets.filter(asset => asset.coinId !== coinId);
       }
-      
+
       const transaction: Transaction = {
         id: Date.now().toString(),
         coinId,
@@ -151,49 +150,48 @@ const tradingReducer = (state: WalletState, action: TradingAction): WalletState 
         type: 'sell',
         amount,
         pricePerUnit,
-        totalAmount: totalRevenue.toString(),
+        totalAmount: toStr(totalRevenue),
         fee,
         timestamp: Date.now(),
       };
-      
+
       return {
-        cashBalance: new Decimal(state.cashBalance).add(totalAfterFee).toString(),
+        cashBalance: toStr(dAdd(parseFloat(state.cashBalance), totalAfterFee)),
         assets: newAssets,
         transactions: [...state.transactions, transaction],
       };
     }
-    
+
     case 'UPDATE_PRICES': {
       const { payload: prices } = action;
       const updatedAssets = state.assets.map(asset => {
         const currentPrice = prices[asset.coinId];
         if (currentPrice !== undefined) {
-          const currentPriceDecimal = new Decimal(currentPrice);
-          const averageBuyPrice = new Decimal(asset.averageBuyPrice);
-          const amount = new Decimal(asset.amount);
-          
-          const profitLoss = currentPriceDecimal.subtract(averageBuyPrice).multiply(amount);
-          const profitLossPercentage = currentPriceDecimal.subtract(averageBuyPrice).divide(averageBuyPrice).multiply(100);
-          
+          const avgBuy = parseFloat(asset.averageBuyPrice);
+          const amt = parseFloat(asset.amount);
+
+          const profitLoss = dMultiply(dSubtract(currentPrice, avgBuy), amt);
+          const profitLossPercentage = dMultiply(dDivide(dSubtract(currentPrice, avgBuy), avgBuy), 100);
+
           return {
             ...asset,
-            currentPrice: currentPriceDecimal.toString(),
-            profitLoss: profitLoss.toString(),
-            profitLossPercentage: profitLossPercentage.toString(),
+            currentPrice: toStr(currentPrice),
+            profitLoss: toStr(profitLoss),
+            profitLossPercentage: toStr(profitLossPercentage),
           };
         }
         return asset;
       });
-      
+
       return {
         ...state,
         assets: updatedAssets,
       };
     }
-    
+
     case 'RESET':
       return initialState;
-    
+
     default:
       return state;
   }
@@ -202,11 +200,11 @@ const tradingReducer = (state: WalletState, action: TradingAction): WalletState 
 export const TradingProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [storedState, setStoredState] = useLocalStorage<WalletState>('trading-wallet', initialState);
   const [state, dispatch] = useReducer(tradingReducer, storedState);
-  
+
   useEffect(() => {
     setStoredState(state);
   }, [state, setStoredState]);
-  
+
   return (
     <TradingContext.Provider value={{ state, dispatch }}>
       {children}
@@ -221,3 +219,26 @@ export const useTrading = (): TradingContextType => {
   }
   return context;
 };
+
+function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T | ((prev: T) => T)) => void] {
+  const [storedValue, setStoredValue] = React.useState<T>(() => {
+    try {
+      const item = window.localStorage.getItem(key);
+      return item ? JSON.parse(item) : initialValue;
+    } catch {
+      return initialValue;
+    }
+  });
+
+  const setValue = React.useCallback((value: T | ((prev: T) => T)) => {
+    try {
+      const valueToStore = value instanceof Function ? value(storedValue) : value;
+      setStoredValue(valueToStore);
+      window.localStorage.setItem(key, JSON.stringify(valueToStore));
+    } catch (error) {
+      console.error(`Error setting localStorage key "${key}":`, error);
+    }
+  }, [key, storedValue]);
+
+  return [storedValue, setValue];
+}

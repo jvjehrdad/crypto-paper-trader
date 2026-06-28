@@ -12,11 +12,11 @@ import {
   Filler,
   type TooltipItem,
 } from 'chart.js';
-import type { CoinMarketChart } from '../../types';
-import { getMarketChart } from '../../api/coingecko';
+import type { CoinMarketChart } from '../../core/interfaces';
+import { getMarketChart } from '../../core/api/coingecko';
 import { Error, Empty } from '../common';
 import { PriceChartSkeleton } from './PriceChartSkeleton';
-import { formatCurrency } from '../../utils/formatting';
+import { formatCurrency } from '../../core/utils/formatting';
 import styles from './PriceChart.module.css';
 
 ChartJS.register(
