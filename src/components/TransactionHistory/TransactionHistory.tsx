@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useTrading } from '../../context/TradingContext';
 import type { Transaction } from '../../types';
 import { formatCurrency } from '../../utils/formatting';
-import { Empty } from '../common';
+import { Empty, CustomSelect } from '../common';
 import styles from './TransactionHistory.module.css';
 
 export const TransactionHistory: React.FC = () => {
@@ -100,29 +100,30 @@ export const TransactionHistory: React.FC = () => {
       <div className={styles.filters}>
         <div className={styles.filterGroup}>
           <label className={styles.filterLabel}>Type:</label>
-          <select
-            className={styles.select}
+          <CustomSelect
             value={filterType}
-            onChange={(e) => setFilterType(e.target.value as 'all' | 'buy' | 'sell')}
-          >
-            <option value="all">All</option>
-            <option value="buy">Buy</option>
-            <option value="sell">Sell</option>
-          </select>
+            onChange={(val) => setFilterType(val as 'all' | 'buy' | 'sell')}
+            options={[
+              { value: 'all', label: 'All' },
+              { value: 'buy', label: 'Buy' },
+              { value: 'sell', label: 'Sell' },
+            ]}
+          />
         </div>
         
         <div className={styles.filterGroup}>
           <label className={styles.filterLabel}>Coin:</label>
-          <select
-            className={styles.select}
+          <CustomSelect
             value={filterCoin}
-            onChange={(e) => setFilterCoin(e.target.value)}
-          >
-            <option value="all">All Coins</option>
-            {uniqueCoins.map(([coinId, coinName]) => (
-              <option key={coinId} value={coinId}>{coinName}</option>
-            ))}
-          </select>
+            onChange={setFilterCoin}
+            options={[
+              { value: 'all', label: 'All Coins' },
+              ...uniqueCoins.map(([coinId, coinName]) => ({
+                value: coinId,
+                label: coinName,
+              })),
+            ]}
+          />
         </div>
       </div>
       
