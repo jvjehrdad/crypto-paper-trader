@@ -67,21 +67,63 @@ You start with $10,000 in virtual cash. Use this to buy cryptocurrencies at live
 - Track profit/loss in real-time as prices change
 - Review complete transaction history
 
-## Decimal Precision Approach
+## Calculations
 
-Financial calculations require careful handling of floating-point numbers. This project uses:
+All financial math lives in `core/utils/calculations.ts` and is consumed by the trading reducer in `core/contexts/TradingContext.tsx`.
 
-1. **String-based storage**: All monetary values stored as strings internally
-2. **Decimal utility class**: Custom `Decimal` class for arithmetic operations
-3. **Display-time rounding**: Numbers are rounded only when displayed, not during calculations
-4. **8 decimal places**: Cryptocurrency amounts support up to 8 decimal places
+### Arithmetic Helpers
 
-Example:
-```typescript
-const amount = new Decimal('0.00000001');
-const price = new Decimal('65000.12345678');
-const total = amount.multiply(price); // No floating-point errors
+| Function | Formula |
+|----------|---------|
+| `dAdd(a, b)` | `a + b` |
+| `dSubtract(a, b)` | `a - b` |
+| `dMultiply(a, b)` | `a * b` |
+| `dDivide(a, b)` | `a / b` (throws on zero) |
+| `dRound(v, n)` | Round `v` to `n` decimal places |
+
+All accept `string | number` — strings are parsed internally so values can be stored as strings in state/localStorage.
+
+### Fee Calculation
+
 ```
+fee = amount × (feePercentage / 100)
+totalCost = amount × pricePerUnit + fee        (buy)
+totalRevenue = amount × pricePerUnit − fee     (sell)
+```
+
+### Average Buy Price (Weighted)
+
+When buying the same coin multiple times, the average buy price is recalculated as:
+
+```
+avgBuyPrice = (existingAmount × existingAvgPrice + newAmount × newPrice)
+              / (existingAmount + newAmount)
+```
+
+Selling does **not** change the average buy price — only the held amount decreases.
+
+### Profit & Loss
+
+Updated on every price refresh (`UPDATE_PRICES` action):
+
+```
+profitLoss = (currentPrice − avgBuyPrice) × heldAmount
+profitLoss% = ((currentPrice − avgBuyPrice) / avgBuyPrice) × 100
+```
+
+### Portfolio Value
+
+```
+portfolioValue = cashBalance + Σ(asset.heldAmount × asset.currentPrice)
+totalPnL = portfolioValue − initialBalance ($10,000)
+```
+
+### Decimal Precision
+
+- All monetary values stored as strings internally
+- Arithmetic goes through `dAdd`/`dSubtract`/`dMultiply`/`dDivide` helpers
+- Numbers are rounded only at display time (`formatCurrency`, `toFixed`)
+- Crypto amounts support up to 8 decimal places
 
 ## Design Decisions
 
