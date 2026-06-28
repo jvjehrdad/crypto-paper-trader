@@ -8,25 +8,39 @@
 .main {
   flex: 1;
   padding: 1.25rem 0;
+  display: flex;
+  align-items: stretch;
 }
 
 .container {
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 1rem;
+  width: 100%;
 }
 
 .grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
-  align-items: start;
+  align-items: stretch;
+  min-height: calc(100vh - 100px);
 }
 
 .sidebar {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+.sidebar:first-child {
+  min-height: 0;
+}
+
+.sidebar:first-child > *:first-child {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .content {
@@ -53,8 +67,9 @@
   }
   
   .grid {
-    grid-template-columns: 320px 1fr 320px;
+    grid-template-columns: 340px 1fr 340px;
     gap: 1.5rem;
+    min-height: calc(100vh - 120px);
   }
   
   .sidebar {
@@ -72,6 +87,6 @@
 
 @media (min-width: 1201px) {
   .grid {
-    grid-template-columns: 320px 1fr 320px;
+    grid-template-columns: 360px 1fr 360px;
   }
 }
