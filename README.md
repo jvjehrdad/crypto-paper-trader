@@ -14,7 +14,7 @@ A cryptocurrency paper trading simulator built with React and TypeScript. Practi
 
 ## Tech Stack
 
-- React 18 + TypeScript
+- React 19 + TypeScript
 - Vite (build tool)
 - Chart.js + React Chart.js 2 (charts)
 - CSS Modules (styling)

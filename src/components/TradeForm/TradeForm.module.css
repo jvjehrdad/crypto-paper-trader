@@ -98,9 +98,9 @@
 }
 
 .active {
-  background-color: var(--color-primary);
-  color: white;
-  box-shadow: 0 2px 8px var(--color-primary-glow);
+  background-color: rgba(139, 92, 246, 0.2);
+  color: var(--color-primary);
+  box-shadow: none;
 }
 
 .formGroup {
