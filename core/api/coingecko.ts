@@ -1,6 +1,7 @@
 import type { Coin, CoinPrice, CoinMarketChart } from '../interfaces';
 
-const BASE_URL = '/api';
+const BASE_URL = 'https://api.coingecko.com/api/v3';
+const API_KEY = import.meta.env.VITE_COINGECKO_API_KEY || '';
 
 const REQUEST_DELAY = 6000;
 let lastRequestTime = 0;
@@ -41,7 +42,11 @@ const fetchWithRateLimit = async (url: string, retries = 3): Promise<Response> =
 
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      const response = await fetch(url);
+      const headers: Record<string, string> = {};
+      if (API_KEY) {
+        headers['x-cg-demo-api-key'] = API_KEY;
+      }
+      const response = await fetch(url, { headers });
 
       if (response.status === 429) {
         const retryAfter = parseInt(response.headers.get('Retry-After') || '5', 10);
