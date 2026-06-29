@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { Header } from './components/Header';
-import { MarketList } from './components/MarketList';
-import { PriceChart } from './components/PriceChart';
-import { TradeForm } from './components/TradeForm';
-import { Wallet } from './components/Wallet';
-import { TransactionHistory } from './components/TransactionHistory';
-import type { Coin } from './core/interfaces';
-import { getCoinsMarkets } from './core/api/coingecko';
-import './core/styles/global.css';
+import { Header } from '../components/Header';
+import { MarketList } from '../components/MarketList';
+import { PriceChart } from '../components/PriceChart';
+import { TradeForm } from '../components/TradeForm';
+import { Wallet } from '../components/Wallet';
+import { TransactionHistory } from '../components/TransactionHistory';
+import type { Coin } from '../core/interfaces';
+import { getCoinsMarkets } from '../core/api/coingecko';
+import '../core/styles/global.css';
 import styles from './App.module.css';
 
 const App: React.FC = () => {
